@@ -6,7 +6,6 @@ PHI_CARMICHAEL_TOTIENT = 'carmichael'
 def egcd(a: int, b: int) -> tuple:
     '''
     Extended euclidean algorithm: au + bv = gcd(a,b)
-
     Output: gcd(a,b), u, v
     '''
     if a == 0:
@@ -19,9 +18,7 @@ def egcd(a: int, b: int) -> tuple:
 def modinv(a: int, m: int, log: bool = False) -> int:
     '''
     Modular inverse: a*a^-1 ≡ 1 [m]
-
     Output: a^-1
-
     Special Case:
     • if a and m are not coprime, a^-1 doesn't exist
     '''
@@ -41,7 +38,6 @@ def lcm(a: int, b: int) -> int:
     Least common multiple: gcd(a,b) = ab/m
     
     Output: m
-
     Special Case:
       • if a and b are coprime, lcm(a,b) = a*b
     '''
@@ -57,7 +53,6 @@ def foldl(operation, accumulator, iterable):
       • prod(factors) = foldl(lambda a,b: a*b, 1, factors)
       • reduce(iterable,  op) = foldl(op, iterable[0], iterable[1:])
       • reduce(generator, op) = foldl1(op, generator)
-
     Note:
       • operation should be a binary function
     '''
@@ -72,19 +67,16 @@ def foldl1(operation, generator):
     Fold left 1st: Convenience method for foldl using first element outputed by the generator as the accumulator
     Equivalent to:
       • foldl(operation, next(generator), generator)
-
     Note:
       • Doesn't support non-generator iterables, either compose with iter or use foldl(operation, subscriptable[0], subscriptable[1:]) instead
     '''
-    foldl(operation, next(generator), generator)
+    return foldl(operation, next(generator), generator)
 
 
 def prod(factors):
     '''
     Product: p = factors[0]*factors[1]*...*factors[len(factors) -1]
-
     Output: p
-
     Disambiguation:
       • Supports any iterable, not just subscriptables
     '''
@@ -94,9 +86,7 @@ def prod(factors):
 def compute_n(*factors: int, log: bool = True) -> int:
     '''
     RSA's modulus n: n = prod(factors)
-
     Output: n
-
     Note:
       • Use p and q for classic RSA
     '''
@@ -119,9 +109,7 @@ def compute_phi(*factors: int, method: str = PHI_EULER_TOTIENT, log: bool = True
     RSA's private exponent d computation step, find φ(n):
       • using Euler's totient function:      φ(n) = (p - 1)(q - 1)
       • using Carmichael's totient function: φ(n) = lcm(p - 1, q - 1)
-
     Output: φ(n)
-
     Note:
       • Above formulaes for φ(n) are extended when dealing with multiprime RSA
       • Also known as λ(n) when using Carmichael's totient function
@@ -148,9 +136,7 @@ def compute_phi(*factors: int, method: str = PHI_EULER_TOTIENT, log: bool = True
 def compute_d(e: int, phi: int = -1, factors: list = None, phi_method = PHI_EULER_TOTIENT, log: bool = True) -> int:
     '''
     RSA's private exponent d: e*d ≡ 1 [φ(n)]
-
     Output: private exponent d
-
     Arguments (either of below):
       • public exponent e, φ(n)
       • public exponent e, factors (p and q for classic RSA)
@@ -173,13 +159,10 @@ def compute_d(e: int, phi: int = -1, factors: list = None, phi_method = PHI_EULE
 def decrypt(ct: int, d: int = -1, n: int = -1, e: int = -1, factors: list = [], phi: int = -1, phi_method: str = PHI_EULER_TOTIENT, log: bool = True) -> int:
     '''
     Decrypt RSA: plain ≡ cipher^d [n]
-
     Output: plain
-
     Arguments (either of below) -> computing modulus n:
       • modulus n
       • factors (p and q for classic RSA)
-
     Arguments (either of below) -> computing private exponent d:
       • private exponent d
       • public exponent e, φ(n)
@@ -198,9 +181,7 @@ def decrypt(ct: int, d: int = -1, n: int = -1, e: int = -1, factors: list = [], 
 def encrypt(pt: int, e: int, n: int = -1, factors: list = []) -> int:
     '''
     Encrypt RSA: cipher ≡ plain^e [n]
-
     Output: cipher
-
     Arguments (either of below):
       • public exponent e, modulus n
       • public exponent e, factors (p and q for classic RSA)
