@@ -12,8 +12,8 @@ def egcd(a: int, b: int) -> tuple:
     if a == 0:
         return (b, 0, 1)
     else:
-        g, y, x = egcd(b % a, a)
-        return g, x - (b // a) * y, y
+        g, v, u = egcd(b % a, a)
+        return g, u - (b // a) * v, v
 
 
 def modinv(a: int, m: int, log: bool = False) -> int:
@@ -50,13 +50,16 @@ def lcm(a: int, b: int) -> int:
 
 def foldl(operation, accumulator, iterable):
     '''
-    Folds an iterable from its left side to its right side, sequentially passing the operation through the accumulator and the next element.
+    Fold left: Folds an iterable by iterating over its elements and accumulating it through the operation
     
-    Exemples:
+    Examples:
       • sum(numbers)  = foldl(lambda a,b: a+b, 0, numbers)
       • prod(factors) = foldl(lambda a,b: a*b, 1, factors)
       • reduce(iterable,  op) = foldl(op, iterable[0], iterable[1:])
       • reduce(generator, op) = foldl1(op, generator)
+
+    Note:
+      • operation should be a binary function
     '''
     for elem in iterable:
         accumulator = operation(accumulator, elem)
@@ -66,7 +69,7 @@ def foldl(operation, accumulator, iterable):
 
 def foldl1(operation, generator):
     '''
-    Convenience method for foldl using first element outputed by the generator as the accumulator
+    Fold left 1st: Convenience method for foldl using first element outputed by the generator as the accumulator
     Equivalent to:
       • foldl(operation, next(generator), generator)
 
@@ -88,30 +91,34 @@ def prod(factors):
     return foldl(lambda a,b: a*b, 1, factors)
 
 
-def rsa_compute_n(*factors: int, log: bool = True) -> int:
+def compute_n(*factors: int, log: bool = True) -> int:
     '''
-    RSA's public key n: n = p*q
+    RSA's modulus n: n = prod(factors)
 
     Output: n
 
-    In case of multiprime RSA, n = r*p*q instead
+    Note:
+      • Use p and q for classic RSA
     '''
     factors = tuple(factors)
-    if len(factors) < 1 or any(map(lambda x: x < 1, factors)):
-        raise Exception("Cannot compute modulus n: Invalid factor (all should be strictly positive)")
+    if len(factors) < 1:
+        raise Exception("Cannot compute modulus n: Not enough factors")
 
     n = prod(factors)
     if log:
         print('n:', n)
     
+    if n < 1:
+        raise Exception("Could not compute modulus n: Invalid modulus (should be strictly positive)")
+    
     return n
 
 
-def rsa_compute_phi(*factors: int, method: str = 'euler', log: bool = True) -> int:
+def compute_phi(*factors: int, method: str = PHI_EULER_TOTIENT, log: bool = True) -> int:
     '''
-    RSA's private key d computation step, find φ(n):
-      • PHI_EULER_TOTIENT:      φ(n) = (p - 1)(q - 1)
-      • PHI_CARMICHAEL_TOTIENT: φ(n) = lcm(p - 1, q - 1)
+    RSA's private exponent d computation step, find φ(n):
+      • using Euler's totient function:      φ(n) = (p - 1)(q - 1)
+      • using Carmichael's totient function: φ(n) = lcm(p - 1, q - 1)
 
     Output: φ(n)
 
@@ -120,10 +127,10 @@ def rsa_compute_phi(*factors: int, method: str = 'euler', log: bool = True) -> i
       • Also known as λ(n) when using Carmichael's totient function
     '''
     if method.lower() not in {'euler', 'carmichael'}:
-        raise Exception('Unknown method "{method}" to compute RSA\'s phi(n). Use either "euler" or "carmichael".')
+        raise Exception('Unknown method "{method}" to compute phi(n). Supported: PHI_EULER_TOTIENT; PHI_CARMICHAEL_TOTIENT.')
 
-    if len(factors) < 1 or any(map(lambda x: x < 1, factors)):
-        raise Exception('Cannot compute phi: Invalid factor (all should be strictly positive).')
+    if len(factors) < 1:
+        raise Exception('Cannot compute phi: Not enough factors')
 
     if log:
         print(f"> Computing phi using {method.title()}'s totient function")
@@ -131,22 +138,26 @@ def rsa_compute_phi(*factors: int, method: str = 'euler', log: bool = True) -> i
     if method.lower() == 'euler':
         return prod(map(lambda x: x-1, factors))
 
-    return foldl1(lcm, map(lambda x: x-1, factors))
+    phi = foldl1(lcm, map(lambda x: x-1, factors))
+    if log:
+        print('phi:', phi)
+
+    return phi
 
 
-def rsa_compute_d(e: int, phi: int = -1, factors: list = None, phi_method = PHI_EULER_TOTIENT, log: bool = True) -> int:
+def compute_d(e: int, phi: int = -1, factors: list = None, phi_method = PHI_EULER_TOTIENT, log: bool = True) -> int:
     '''
-    RSA's private key d: e*d ≡ 1 [φ(n)]
+    RSA's private exponent d: e*d ≡ 1 [φ(n)]
 
-    Output: d
+    Output: private exponent d
 
     Arguments (either of below):
-      • φ(n)
-      • factors (p and q for classic RSA)
-          • optional: phi_method, see rsa_compute_phi
+      • public exponent e, φ(n)
+      • public exponent e, factors (p and q for classic RSA)
+          • optional: phi_method (see compute_phi)
     '''
     if phi < 1:
-        phi = rsa_compute_phi(*factors, method=phi_method, log=log)
+        phi = compute_phi(*factors, method=phi_method, log=log)
 
     if e < 1:
         raise Exception('Cannot compute private key d: Invalid exponent (should be strictly positive)')
@@ -159,42 +170,42 @@ def rsa_compute_d(e: int, phi: int = -1, factors: list = None, phi_method = PHI_
     return d
 
 
-def rsa_decrypt(ct: int, d: int = -1, n: int = -1, e: int = -1, factors: list = [], phi: int = -1, phi_method: str = PHI_EULER_TOTIENT, log: bool = True) -> int:
+def decrypt(ct: int, d: int = -1, n: int = -1, e: int = -1, factors: list = [], phi: int = -1, phi_method: str = PHI_EULER_TOTIENT, log: bool = True) -> int:
     '''
     Decrypt RSA: plain ≡ cipher^d [n]
 
     Output: plain
 
-    Arguments (either of below) -> computing n:
-      • n
-      • p, q
+    Arguments (either of below) -> computing modulus n:
+      • modulus n
+      • factors (p and q for classic RSA)
 
-    Arguments (either of below) -> computing d:
-      • d
-      • e, φ(n)
-      • e, factors (p and q for classic RSA)
-          • optional: phi_method (see rsa_compute_phi)
+    Arguments (either of below) -> computing private exponent d:
+      • private exponent d
+      • public exponent e, φ(n)
+      • public exponent e, factors (p and q for classic RSA)
+          • optional: phi_method (see compute_phi)
     '''
     if n < 1:
-        n = rsa_compute_n(*factors, log=log)
+        n = compute_n(*factors, log=log)
 
     if d < 1:
-        d = rsa_compute_d(e=e, phi=phi, factors=factors, log=log)
+        d = compute_d(e=e, phi=phi, factors=factors, log=log)
 
     return pow(ct, d, n)
 
 
-def rsa_encrypt(pt: int, e: int, n: int = -1, factors: list = []) -> int:
+def encrypt(pt: int, e: int, n: int = -1, factors: list = []) -> int:
     '''
     Encrypt RSA: cipher ≡ plain^e [n]
 
     Output: cipher
 
     Arguments (either of below):
-      • n
-      • factors (p and q for classic RSA)
+      • public exponent e, modulus n
+      • public exponent e, factors (p and q for classic RSA)
     '''
     if n < 1:
-        n = rsa_compute_n(*factors)
+        n = compute_n(*factors)
     
     return pow(pt, e, n)
