@@ -6,14 +6,13 @@
 - You can implement a script in any programming lanfunguage.
 - You can provide several implementations of the same script in different languages.
 - Each implementation of the same script must have the same name, differentiated by file extension only.
-- Each topic/subtopic must contain a `README.md` with a table of contents.
-- An entry in a table of contents must link to the script's folder
+- Each topic/subtopic must contain a `README.md` with a table of contents and list of contributors.
+- An entry in a table of contents must link to the related file or folder
 - Each script requires an explanation of its underlying principles and/or its goal.
 - The explanation of a script must be a markdown file which name is the same as the script's.
 
 ## Content
 Anything (as long as it's legal and safe for work :p).
-The contributors of this repository aren't liable for any misuse of the provided scripts.
 By using the provided scripts, you are to follow the laws applicable in your country, and cannot hold the contributors of this repository responsible if you break said laws.
 
 ## Format
@@ -72,6 +71,7 @@ Example:
 ...
 
 ## Implementation Details
+
 ### [Python](rsa.py)
 - Encryption
 - Decryption
@@ -101,9 +101,9 @@ Examples:
 ## Process
 1. Fork it!
 1. Clone it!
-1. Create a new branch pertaining to your desired changes (e.g: rsa-python-implem)
-1. Make your changes, following the above contribution rules
-1. Propose it through a pull-request ─ again, make sure it complies with the guidelines ;)
-1. Wait for a review
-1. If any change are required, either argue or comply, but eventually go back to the previous step anyway
-1. Everything is fine, your request should be merged into the main branch!
+1. Create a new branch pertaining to your desired changes (e.g: rsa-python-implem).
+1. Make your changes, following the above contribution rules.
+1. Propose it through a pull-request ─ again, make sure it complies with the guidelines. ;)
+1. Wait for a review.
+1. If any change are required, either argue or comply, but eventually go back to the previous step anyway.
+1. Everything is fine, your request should be merged into the main branch!.

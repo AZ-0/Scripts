@@ -7,8 +7,10 @@
 > You can contribute by reading the [contributions guidelines](CONTRIBUTING.md) and following the steps.
 >
 > **Legend** :
-> `📑` script · `📖` explanation
+> `📁` folder · `📑` script · `📖` explanation
 
-## [Crypto](/crypto)
-- `📑` [RSA](/crypto/rsa.py)
-- `📖` [RSA](/crypto/rsa.md)
+> Contributors: [A~Z](https://github.com/AZ-0)
+
+## [Cryptography](crypto)
+- [Asymmetric Ciphers (aka Public key Ciphers)](crypto/asymmetric)
+  - `📁` [RSA](crypto/asymmetric/rsa)
