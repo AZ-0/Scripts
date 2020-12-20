@@ -47,12 +47,13 @@ def encrypt(plaintext: int, e: int, n: int = -1, factors: list = []):
 ```
 
 ### Explanations
-The author and contributors (note that contributors of an explanation may differ from contributors of related scripts) of an explanation are to be
-mentioned in said explanation ─ if they so wish.
+The author and contributors (note that contributors of an explanation may differ from contributors of related scripts) of an explanation are to be mentioned in said explanation ─ if they so wish.
 For instance, add `> Written by [<Contributor 1>](github link), [<Contributor 2>](github link)` below the explanation's title.
 
 An explanation must (as its name implies) explain the behavior of a script and/or the principles of the script.
 If a script implements several principles, an explanation is required for each of them.
+
+The main explanation's name should be `README.md`.
 
 Example:
 ```md
