@@ -1,5 +1,11 @@
 # Contribution Guidelines
 
+Beware! This project and the provided scripts are all distributed under the [Unlicense](https://unlicense.org).
+That is, by contributing you accept to waive all rights on your contribution and put it in the public domain.
+We still keep track of who has contributed to what to some extent though.
+
+If you still want to contribute, please read the following!
+
 ## Structure
 - Each topic must have its dedicated folder.
 - You can nest folders for subtopics.
